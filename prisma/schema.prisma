@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum FulfillmentType {
+  PICKUP
+  DELIVERY
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  REFUNDED
+}
+
+model Location {
+  id          String    @id @default(cuid())
+  name        String
+  address     String
+  kayakCount  Int       @default(6)
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  bookings    Booking[]
+}
+
+model Booking {
+  id               String          @id @default(cuid())
+  customerName     String
+  customerEmail    String
+  customerPhone    String
+
+  fulfillmentType  FulfillmentType
+  location         Location?       @relation(fields: [locationId], references: [id])
+  locationId       String?
+  deliveryAddress  String?
+
+  date             DateTime
+  startTime        String
+  durationHours     Float
+  kayakCount       Int             @default(1)
+
+  basePrice        Float
+  deliveryFee      Float           @default(0)
+  totalPrice       Float
+
+  status           BookingStatus   @default(PENDING)
+  paymentStatus    PaymentStatus   @default(UNPAID)
+  stripeSessionId  String?
+
+  notes            String?
+
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
