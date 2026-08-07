@@ -9,6 +9,9 @@ export default defineConfig({
     path: "prisma/migrations",
     seed: "tsx prisma/seed.ts",
   },
+  // Note: this installed Prisma version's config type only supports `url`
+  // and `shadowDatabaseUrl` here (no `directUrl`) — migrations run through
+  // the pooled connection, which works fine for this app's simple schema.
   datasource: {
     url: process.env["DATABASE_URL"],
   },
